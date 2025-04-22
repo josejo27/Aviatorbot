@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Bot de Análise do Aviator</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+    textarea { width: 100%; height: 100px; }
+    button { padding: 10px 20px; margin-top: 10px; }
+    .resultados { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Bot de Análise do Aviator</h1>
+  <p>Cole os multiplicadores (separados por vírgula):</p>
+  <textarea id="inputDados"></textarea>
+  <br>
+  <button onclick="analisar()">Analisar</button>
+  <div class="resultados">
+    <p><strong>Média:</strong> <span id="media"></span></p>
+    <p><strong>Maior valor:</strong> <span id="maior"></span></p>
+    <p><strong>Voos abaixo de 2x:</strong> <span id="baixos"></span></p>
+    <canvas id="grafico" width="400" height="150"></canvas>
+  </div>
+
+  <script>
+    function analisar() {
+      const input = document.getElementById('inputDados').value;
+      const numeros = input.split(',').map(v => parseFloat(v.trim())).filter(v => !isNaN(v));
+
+      if (numeros.length === 0) {
+        alert("Insira valores válidos.");
+        return;
+      }
+
+      const media = (numeros.reduce((a, b) => a + b, 0) / numeros.length).toFixed(2);
+      const maior = Math.max(...numeros).toFixed(2);
+      const baixos = numeros.filter(n => n < 2).length;
+
+      document.getElementById('media').innerText = media;
+      document.getElementById('maior').innerText = maior;
+      document.getElementById('baixos').innerText = baixos;
+
+      const ctx = document.getElementById('grafico').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: numeros.map((_, i) => i + 1),
+          datasets: [{
+            label: 'Multiplicadores',
+            data: numeros,
+            borderColor: 'rgb(75, 192, 192)',
+            tension: 0.2
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    }
+  </script>
+</body>
+      </html
